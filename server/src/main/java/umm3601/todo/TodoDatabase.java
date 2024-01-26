@@ -9,7 +9,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.javalin.http.BadRequestResponse;
+// import io.javalin.http.BadRequestResponse;
 
 public class TodoDatabase {
     
@@ -44,6 +44,10 @@ public class TodoDatabase {
             String targetCat = queryParams.get("category").get(0);
             filteredTodos = filterTodosByCategory(filteredTodos, targetCat);
         }
+        if (queryParams.containsKey("body")){
+            String targetBody = queryParams.get("category").get(0);
+            filteredTodos = filterTodosByCategory(filteredTodos, targetBody);
+        }
         return filteredTodos;
     }
     
@@ -51,6 +55,10 @@ public class TodoDatabase {
 
     public Todo[] filterTodosByOwner(Todo[] todos, String targetOwner) {
         return Arrays.stream(todos).filter(x -> x.owner.equals(targetOwner)).toArray(Todo[]::new);
+    }
+
+    public Todo[] filterTodosByCategory(Todo[] todos, String targetCat) {
+        return Arrays.stream(todos).filter(x -> x.category.equals(targetCat)).toArray(Todo[]::new);
     }
 
     
