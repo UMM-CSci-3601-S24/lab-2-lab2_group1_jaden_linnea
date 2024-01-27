@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 // import io.javalin.http.BadRequestResponse;
 
 public class TodoDatabase {
-    
+
     private Todo[] allTodos;
 
     public TodoDatabase(String todoDataFile) throws IOException {
@@ -27,7 +27,7 @@ public class TodoDatabase {
     public int size() {
         return allTodos.length;
 }
-    
+
 
     public Todo getTodo(String id) {
         return Arrays.stream(allTodos).filter(x -> x._id.equals(id)).findFirst().orElse(null);
@@ -44,14 +44,37 @@ public class TodoDatabase {
             String targetCat = queryParams.get("category").get(0);
             filteredTodos = filterTodosByCategory(filteredTodos, targetCat);
         }
-        if (queryParams.containsKey("body")){
-            String targetBody = queryParams.get("category").get(0);
-            filteredTodos = filterTodosByCategory(filteredTodos, targetBody);
+        if (queryParams.containsKey("contains")){
+            String targetContains = queryParams.get("contains").get(0);
+            filteredTodos = todosContain(filteredTodos, targetContains);
+
         }
+        if (queryParams.containsKey("status")){
+          String targetStatus = queryParams.get("status").get(0).toLowerCase();
+          boolean boolStatus;
+          if(targetStatus.equals("complete")){
+            boolStatus = true;
+          }
+          else if(targetStatus.equals("incomplete")){
+            boolStatus = false;
+          }
+          else{boolStatus = false;}
+
+          filteredTodos = filterTodosByStatus(filteredTodos, boolStatus);
+        }
+        if (queryParams.containsKey("orderBy")){
+          String targetToOrderBy = queryParams.get("orderBy").get(0);
+          filteredTodos = sortTodos(filteredTodos, targetToOrderBy);
+        }
+
         return filteredTodos;
     }
-    
-
+    public Todo[] todosContain(Todo[] todos, String targetContains) {
+      return Arrays.stream(todos).filter(x -> x.body.contains(targetContains)).toArray(Todo[]::new);
+  }
+    public Todo[] filterTodosByStatus(Todo[] todos, boolean boolStatus) {
+      return Arrays.stream(todos).filter(x -> x.status == boolStatus).toArray(Todo[]::new);
+  }
 
     public Todo[] filterTodosByOwner(Todo[] todos, String targetOwner) {
         return Arrays.stream(todos).filter(x -> x.owner.equals(targetOwner)).toArray(Todo[]::new);
@@ -60,6 +83,24 @@ public class TodoDatabase {
     public Todo[] filterTodosByCategory(Todo[] todos, String targetCat) {
         return Arrays.stream(todos).filter(x -> x.category.equals(targetCat)).toArray(Todo[]::new);
     }
+    public Todo[] sortTodos(Todo[] todos, String targetToOrderBy) {
+       String sortBy = targetToOrderBy.toLowerCase();
+       todos = Arrays.stream(todos).sorted((todo1, todo2) ->{
+        switch (sortBy) {
+          case "owner":
+            return todo1.owner.compareTo(todo2.owner);
+          case "category":
+            return todo1.category.compareTo(todo2.category);
+          case "body":
+          return todo1.body.compareTo(todo2.body);
+          default:
+            return 0;
+        }
+      })
+      .toArray(Todo[]::new);
+      return todos;
 
-    
+    }
+
+
 }
