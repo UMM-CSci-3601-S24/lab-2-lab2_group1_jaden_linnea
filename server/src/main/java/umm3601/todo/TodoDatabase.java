@@ -9,6 +9,8 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.javalin.http.BadRequestResponse;
+
 // import io.javalin.http.BadRequestResponse;
 
 public class TodoDatabase {
@@ -40,6 +42,7 @@ public class TodoDatabase {
             //equal to what you are searching for so if age=25 is what you are searching for it creates that list
             filteredTodos = filterTodosByOwner(filteredTodos, targetOwner);
         }
+
         if (queryParams.containsKey("category")){
             String targetCat = queryParams.get("category").get(0);
             filteredTodos = filterTodosByCategory(filteredTodos, targetCat);
@@ -83,6 +86,14 @@ public class TodoDatabase {
     public Todo[] filterTodosByCategory(Todo[] todos, String targetCat) {
         return Arrays.stream(todos).filter(x -> x.category.equals(targetCat)).toArray(Todo[]::new);
     }
+    public Todo[] limitTodos(Todo[] todos, int targetLimit) {
+        Todo[] copyArr = new Todo[targetLimit];
+        for(int i = 0; i < targetLimit; i++) {
+             copyArr[i] = todos[i];
+       }
+       return copyArr;
+    }
+
     public Todo[] sortTodos(Todo[] todos, String targetToOrderBy) {
        String sortBy = targetToOrderBy.toLowerCase();
        todos = Arrays.stream(todos).sorted((todo1, todo2) ->{
