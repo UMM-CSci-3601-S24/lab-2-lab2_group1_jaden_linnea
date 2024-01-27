@@ -65,6 +65,17 @@ public class TodoDatabase {
 
           filteredTodos = filterTodosByStatus(filteredTodos, boolStatus);
         }
+
+        if (queryParams.containsKey("limit")) {
+          String paramLimit = queryParams.get("limit").get(0);
+          try {
+              int targetLimit = Integer.parseInt(paramLimit);
+              filteredTodos = limitTodos(filteredTodos, targetLimit);
+            } catch (NumberFormatException e) {
+              throw new BadRequestResponse("Specified age '" + paramLimit + "' can't be parsed to an integer");
+            }
+        }
+
         if (queryParams.containsKey("orderBy")){
           String targetToOrderBy = queryParams.get("orderBy").get(0);
           filteredTodos = sortTodos(filteredTodos, targetToOrderBy);
