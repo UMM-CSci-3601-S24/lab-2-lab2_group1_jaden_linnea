@@ -1,6 +1,7 @@
 package umm3601.todo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -215,6 +216,131 @@ public class TodoControllerSpec {
       assertEquals(false , todo.status);
     }
     assertEquals(41, todoArrayCaptor.getValue().length);
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  @Test
+  public void canGetUserWithSpecifiedTodo() throws IOException {
+    // A specific user ID known to be in the "database".
+    String id = "58895985c1849992336c219b";
+    // Get the todo associated with that ID.
+    Todo todo = db.getTodo(id);
+
+    when(ctx.pathParam("id")).thenReturn(id);
+
+    todoController.getTodo(ctx);
+
+    verify(ctx).json(todo);
+    verify(ctx).status(HttpStatus.OK);
+  }
+
+  @Test
+  public void respondsAppropriatelyToRequestForNonexistentId() throws IOException {
+    when(ctx.pathParam("id")).thenReturn(null);
+    Throwable exception = Assertions.assertThrows(NotFoundResponse.class, () -> {
+      todoController.getTodo(ctx);
+    });
+    assertEquals("No todo with id " + null + " was found.", exception.getMessage());
+  }
+
+  @Test
+  public void canOrderByAttribute() throws IOException {
+    Map<String, List<String>> queryParams1 = new HashMap<>();
+    queryParams1.put("orderBy", Arrays.asList(new String[] {"owner"}));
+    when(ctx.queryParamMap()).thenReturn(queryParams1);
+    todoController.getTodos(ctx);
+    verify(ctx).json(todoArrayCaptor.capture());
+    Todo[] sortedByOwner = todoArrayCaptor.getValue();
+    for (int i = 1; i < sortedByOwner.length; i++){
+      assertTrue(sortedByOwner[i-1].owner.compareTo(sortedByOwner[i].owner) <= 0);
+    }
   }
 
 }
