@@ -21,10 +21,10 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import io.javalin.Javalin;
-import io.javalin.http.BadRequestResponse;
+//import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
-import io.javalin.http.NotFoundResponse;
+//import io.javalin.http.NotFoundResponse;
 import umm3601.Main;
 
 /**
@@ -167,6 +167,16 @@ public class TodoControllerSpec {
     assertEquals(43, todoArrayCaptor.getValue().length);
   }
 
+  @Test
+  public void canGetTodoWithId() throws IOException {
+    Todo todo = db.getTodo("58895985ba6d35a801f171ac");
+    when(ctx.pathParam("id")).thenReturn("58895985ba6d35a801f171ac");
+    todoController.getTodo(ctx);
+    verify(ctx).json(todo);
+    verify(ctx).status(HttpStatus.OK);
+  }
+
+  @Test
   public void canGetTodosWithCategory() throws IOException {
     Map<String, List<String>> queryParams = new HashMap<>();
     queryParams.put("category", Arrays.asList(new String[] {"homework"}));
@@ -179,6 +189,7 @@ public class TodoControllerSpec {
     assertEquals(79, todoArrayCaptor.getValue().length);
   }
 
+  @Test
   public void canGetTodosWithContains() throws IOException {
     Map<String, List<String>> queryParams = new HashMap<>();
     queryParams.put("contains", Arrays.asList(new String[] {"tempor"}));
@@ -186,13 +197,12 @@ public class TodoControllerSpec {
     todoController.getTodos(ctx);
     verify(ctx).json(todoArrayCaptor.capture());
     for (Todo todo : todoArrayCaptor.getValue()) {
-      assertEquals(true , todo.body.contains("tempor"));
+      assertEquals(true, todo.body.contains("tempor"));
     }
-    assertEquals(74, todoArrayCaptor.getValue().length);
+    assertEquals(68, todoArrayCaptor.getValue().length);
   }
 
-
-
+  @Test
   public void canGetTodosWithStatusComplete() throws IOException {
     Map<String, List<String>> queryParams = new HashMap<>();
     queryParams.put("status", Arrays.asList(new String[] {"complete"}));
@@ -200,11 +210,12 @@ public class TodoControllerSpec {
     todoController.getTodos(ctx);
     verify(ctx).json(todoArrayCaptor.capture());
     for (Todo todo : todoArrayCaptor.getValue()) {
-      assertEquals(true , todo.status);
+      assertEquals(true, todo.status);
     }
     assertEquals(143, todoArrayCaptor.getValue().length);
   }
 
+  @Test
   public void canGetTodosWithStatusIncomplete() throws IOException {
     Map<String, List<String>> queryParams = new HashMap<>();
     queryParams.put("status", Arrays.asList(new String[] {"incomplete"}));
@@ -212,9 +223,34 @@ public class TodoControllerSpec {
     todoController.getTodos(ctx);
     verify(ctx).json(todoArrayCaptor.capture());
     for (Todo todo : todoArrayCaptor.getValue()) {
-      assertEquals(false , todo.status);
+      assertEquals(false, todo.status);
     }
-    assertEquals(41, todoArrayCaptor.getValue().length);
+    assertEquals(157, todoArrayCaptor.getValue().length);
+  }
+
+  @Test
+  public void canGetTodosWithStatusBlank() throws IOException {
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("status", Arrays.asList(new String[] {""}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+    todoController.getTodos(ctx);
+    verify(ctx).json(todoArrayCaptor.capture());
+    for (Todo todo : todoArrayCaptor.getValue()) {
+      assertEquals(false, todo.status);
+    }
+    assertEquals(157, todoArrayCaptor.getValue().length);
+  }
+  @Test
+  public void canGetTodosWithLimit() throws IOException {
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("limit", Arrays.asList(new String[] {"7"}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+    todoController.getTodos(ctx);
+    verify(ctx).json(todoArrayCaptor.capture());
+    for (Todo todo : todoArrayCaptor.getValue()) {
+      assertEquals(0, todo.limit);
+    }
+    assertEquals(7, todoArrayCaptor.getValue().length);
   }
 
 }
