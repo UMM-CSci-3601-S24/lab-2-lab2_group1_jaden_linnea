@@ -9,7 +9,6 @@ import io.javalin.http.NotFoundResponse;
 import umm3601.Controller;
 
 public class TodoController implements Controller {
-    
     private TodoDatabase todoDatabase;
 
     public TodoController(TodoDatabase todoDatabase) {
