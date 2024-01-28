@@ -25,7 +25,7 @@ import io.javalin.Javalin;
 //import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
-//import io.javalin.http.NotFoundResponse;
+import io.javalin.http.NotFoundResponse;
 import umm3601.Main;
 
 /**
@@ -241,6 +241,7 @@ public class TodoControllerSpec {
     }
     assertEquals(157, todoArrayCaptor.getValue().length);
   }
+
   @Test
   public void canGetTodosWithLimit() throws IOException {
     Map<String, List<String>> queryParams = new HashMap<>();
@@ -253,94 +254,6 @@ public class TodoControllerSpec {
     }
     assertEquals(7, todoArrayCaptor.getValue().length);
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   @Test
   public void canGetUserWithSpecifiedTodo() throws IOException {
@@ -374,8 +287,8 @@ public class TodoControllerSpec {
     todoController.getTodos(ctx);
     verify(ctx).json(todoArrayCaptor.capture());
     Todo[] sortedByOwner = todoArrayCaptor.getValue();
-    for (int i = 1; i < sortedByOwner.length; i++){
-      assertTrue(sortedByOwner[i-1].owner.compareTo(sortedByOwner[i].owner) <= 0);
+    for (int i = 1; i < sortedByOwner.length; i++) {
+      assertTrue(sortedByOwner[i - 1].owner.compareTo(sortedByOwner[i].owner) <= 0);
     }
   }
 
