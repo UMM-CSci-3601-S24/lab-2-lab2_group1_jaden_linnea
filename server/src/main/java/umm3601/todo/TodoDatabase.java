@@ -19,7 +19,7 @@ public class TodoDatabase {
 
     public TodoDatabase(String todoDataFile) throws IOException {
         InputStream resourceAsStream = getClass().getResourceAsStream(todoDataFile);
-        if(resourceAsStream == null){
+        if (resourceAsStream == null) {
             throw new IOException("Could not find " + todoDataFile);
         }
         InputStreamReader reader = new InputStreamReader(resourceAsStream);
@@ -34,34 +34,34 @@ public class TodoDatabase {
     public Todo getTodo(String id) {
         return Arrays.stream(allTodos).filter(x -> x._id.equals(id)).findFirst().orElse(null);
     }
-    public Todo[] listTodos(Map<String, List<String>> queryParams){
+    public Todo[] listTodos(Map<String, List<String>> queryParams) {
         Todo[] filteredTodos = allTodos;
 
-        if (queryParams.containsKey("owner")){
+        if (queryParams.containsKey("owner")) {
             String targetOwner = queryParams.get("owner").get(0);  //takes the first one and creates a list of all users
             //equal to what you are searching for so if age=25 is what you are searching for it creates that list
             filteredTodos = filterTodosByOwner(filteredTodos, targetOwner);
         }
 
-        if (queryParams.containsKey("category")){
+        if (queryParams.containsKey("category")) {
             String targetCat = queryParams.get("category").get(0);
             filteredTodos = filterTodosByCategory(filteredTodos, targetCat);
         }
-        if (queryParams.containsKey("contains")){
+        if (queryParams.containsKey("contains")) {
             String targetContains = queryParams.get("contains").get(0);
             filteredTodos = todosContain(filteredTodos, targetContains);
 
         }
-        if (queryParams.containsKey("status")){
+        if (queryParams.containsKey("status")) {
           String targetStatus = queryParams.get("status").get(0).toLowerCase();
           boolean boolStatus;
-          if(targetStatus.equals("complete")){
+          if (targetStatus.equals("complete")) {
             boolStatus = true;
-          }
-          else if(targetStatus.equals("incomplete")){
+          } else if (targetStatus.equals("incomplete")) {
+            boolStatus = false;
+          } else {
             boolStatus = false;
           }
-          else{boolStatus = false;}
 
           filteredTodos = filterTodosByStatus(filteredTodos, boolStatus);
         }
@@ -76,7 +76,7 @@ public class TodoDatabase {
             }
         }
 
-        if (queryParams.containsKey("orderBy")){
+        if (queryParams.containsKey("orderBy")) {
           String targetToOrderBy = queryParams.get("orderBy").get(0);
           filteredTodos = sortTodos(filteredTodos, targetToOrderBy);
         }
@@ -99,7 +99,7 @@ public class TodoDatabase {
     }
     public Todo[] limitTodos(Todo[] todos, int targetLimit) {
         Todo[] copyArr = new Todo[targetLimit];
-        for(int i = 0; i < targetLimit; i++) {
+        for (int i = 0; i < targetLimit; i++) {
              copyArr[i] = todos[i];
        }
        return copyArr;
@@ -107,7 +107,7 @@ public class TodoDatabase {
 
     public Todo[] sortTodos(Todo[] todos, String targetToOrderBy) {
        String sortBy = targetToOrderBy.toLowerCase();
-       todos = Arrays.stream(todos).sorted((todo1, todo2) ->{
+       todos = Arrays.stream(todos).sorted((todo1, todo2) -> {
         switch (sortBy) {
           case "owner":
             return todo1.owner.compareTo(todo2.owner);
